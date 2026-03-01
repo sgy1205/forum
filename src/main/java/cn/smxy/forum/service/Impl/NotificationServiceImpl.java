@@ -15,9 +15,17 @@ import java.util.List;
 @Service
 public class NotificationServiceImpl extends ServiceImpl<NotificationMapper, Notification> implements INotificationService {
 
+    @Autowired
+    private NotificationMapper notificationMapper;
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void addNotifications(List<Notification> notifications) {
         this.saveBatch(notifications);
+    }
+
+    @Override
+    public Long getTotalUnreadCount(Long userId) {
+        return notificationMapper.getTotalUnreadCount(userId);
     }
 }

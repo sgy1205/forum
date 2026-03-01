@@ -150,6 +150,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     public void updateRedisUser(Long userId) {
         User user = userMapper.selectById(userId);
         LoginUser loginUser = redisUtil.getCacheObject("user:" + userId);
+        if(loginUser==null){
+            return;
+        }
         loginUser.setUser(user);
         redisUtil.setCacheObject("user:" + userId, loginUser);
     }

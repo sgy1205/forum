@@ -64,7 +64,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/webjars/**",
                         "/*/api-docs",
                         "/druid/**",
-                        "/upload/**"
+                        "/upload/**",
+                        "/ws/**"
                 ).permitAll()
                 // 其他请求需认证
                 .anyRequest().authenticated()

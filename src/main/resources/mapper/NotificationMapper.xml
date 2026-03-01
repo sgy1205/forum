@@ -2,4 +2,24 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.smxy.forum.mapper.NotificationMapper">
 
+    <!-- 在你的Mapper.xml中新增这个查询 -->
+    <select id="getTotalUnreadCount" resultType="java.lang.Long">
+        SELECT SUM(unread_count) AS total_unread_count
+        FROM (
+                 -- 统计未读私信数
+                 SELECT COUNT(*) AS unread_count
+                 FROM message
+                 WHERE receiver_id = #{userId} AND status = 0
+
+                 UNION ALL
+
+                 -- 统计未读通知数
+                 SELECT COUNT(*) AS unread_count
+                 FROM notification
+                 WHERE del_flag = 0
+                   AND user_id = #{userId}
+                   AND read_status = 0
+             ) AS temp
+    </select>
+
 </mapper>

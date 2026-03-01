@@ -3,8 +3,10 @@ package cn.smxy.forum.controller;
 import cn.smxy.forum.domain.entity.Post;
 import cn.smxy.forum.domain.param.insert.AddPostDTO;
 import cn.smxy.forum.domain.param.update.UpdatePostDTO;
+import cn.smxy.forum.domain.vo.ForbiddenWordCheckResultVo;
 import cn.smxy.forum.domain.vo.PostDetailVo;
 import cn.smxy.forum.domain.vo.PostUpdateDetailVo;
+import cn.smxy.forum.service.IForbiddenWordsCheckService;
 import cn.smxy.forum.service.IPostService;
 import cn.smxy.forum.service.ITagsService;
 import cn.smxy.forum.utils.R;
@@ -24,16 +26,28 @@ public class PostController extends BaseController {
     private IPostService postService;
     @Autowired
     private ITagsService tagsService;
+    @Autowired
+    private IForbiddenWordsCheckService forbiddenWordsCheckService;
 
     @PostMapping()
     @ApiOperation("添加帖子")
     public R addPost(@RequestBody AddPostDTO addPostDTO) {
+        String text = addPostDTO.getTitle()+"|"+addPostDTO.getContent().replaceAll("<[^>]+>", "")+"|"+addPostDTO.getNode();
+        ForbiddenWordCheckResultVo resultVo = forbiddenWordsCheckService.checkForbiddenWords(text);
+        if(!resultVo.isResult()){
+            return R.fail("你的帖子存在违禁词："+resultVo.getForbiddenWords());
+        }
         return R.to(postService.addPost(getUserId(),addPostDTO),"添加");
     }
 
     @PutMapping()
     @ApiOperation("修改帖子")
     public R updatePost(@RequestBody UpdatePostDTO updatePostDTO) {
+        String text = updatePostDTO.getTitle()+"|"+updatePostDTO.getContent().replaceAll("<[^>]+>", "")+"|"+updatePostDTO.getNode();
+        ForbiddenWordCheckResultVo resultVo = forbiddenWordsCheckService.checkForbiddenWords(text);
+        if(!resultVo.isResult()){
+            return R.fail("你的帖子存在违禁词："+resultVo.getForbiddenWords());
+        }
         Post post = postService.getById(updatePostDTO.getPostId());
         if(!post.getUserId().equals(getUserId())){
             return R.fail("这不是你的帖子，你无权修改");

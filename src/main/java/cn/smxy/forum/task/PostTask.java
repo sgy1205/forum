@@ -28,7 +28,7 @@ public class PostTask {
      */
     @Scheduled(cron = "0/10 * * * * ?")// 每10秒执行一次
     public void updatePostLikes(){
-        Map<String, Object> cacheMap = redisUtil.popHashAndDelete(REDIS_POSTLIKES_INCRCOUNTKEY);
+        Map<Object, Object> cacheMap = redisUtil.popHashAndDelete(REDIS_POSTLIKES_INCRCOUNTKEY);
         if(cacheMap.isEmpty()){
             return;
         }
@@ -47,7 +47,7 @@ public class PostTask {
      */
     @Scheduled(cron = "0/10 * * * * ?")// 每10秒执行一次
     public void updatePostCollection(){
-        Map<String, Object> cacheMap = redisUtil.popHashAndDelete(REDIS_POSTCOLLECTION_INCRCOUNTKEY);
+        Map<Object, Object> cacheMap = redisUtil.popHashAndDelete(REDIS_POSTCOLLECTION_INCRCOUNTKEY);
         if(cacheMap.isEmpty()){
             return;
         }
@@ -66,7 +66,7 @@ public class PostTask {
      */
     @Scheduled(cron = "0/10 * * * * ?")// 每10秒执行一次
     public void updatePostComment(){
-        Map<String, Object> cacheMap = redisUtil.popHashAndDelete(REDIS_POSTCOMMENT_INCRCOUNTKEY);
+        Map<Object, Object> cacheMap = redisUtil.popHashAndDelete(REDIS_POSTCOMMENT_INCRCOUNTKEY);
         if(cacheMap.isEmpty()){
             return;
         }
@@ -86,7 +86,7 @@ public class PostTask {
      */
     @Scheduled(cron = "0/10 * * * * ?")// 每10秒执行一次
     public void updatePostBrowse(){
-        Map<String, Object> cacheMap = redisUtil.popHashAndDelete(REDIS_POSTBROWSE_INCRCOUNTKEY);
+        Map<Object, Object> cacheMap = redisUtil.popHashAndDelete(REDIS_POSTBROWSE_INCRCOUNTKEY);
         if(cacheMap.isEmpty()){
             return;
         }

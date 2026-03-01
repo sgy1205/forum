@@ -4,6 +4,9 @@ server:
     context-path: /
 
 spring:
+  web:
+    socket:
+      allow-origin: '*'
   redis:
     host: 127.0.0.1
     port: 6379

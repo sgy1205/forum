@@ -96,7 +96,11 @@ public class RoleController extends BaseController {
         //修改权限菜单
         if(roleService.updateRole(updateRoleDTO)>0){
             roleService.deleteRoleMenu(updateRoleDTO.getRoleId());
-            return R.to(roleService.addRoleMenu(updateRoleDTO.getMenuIds(),updateRoleDTO.getRoleId())>0,"修改");
+            if(updateRoleDTO.getMenuIds().size()>0){
+                return R.to(roleService.addRoleMenu(updateRoleDTO.getMenuIds(),updateRoleDTO.getRoleId())>0,"修改");
+            }else{
+                return R.ok("修改成功");
+            }
         }else {
             return R.fail();
         }

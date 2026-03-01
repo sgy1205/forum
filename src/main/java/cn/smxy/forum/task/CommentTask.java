@@ -27,7 +27,7 @@ public class CommentTask {
      */
     @Scheduled(cron = "0/10 * * * * ?")// 每10秒执行一次
     public void updateCommentLikes(){
-        Map<String, Object> cacheMap = redisUtil.popHashAndDelete(REDIS_COMMENTLIKES_INCRCOUNTKEY);
+        Map<Object, Object> cacheMap = redisUtil.popHashAndDelete(REDIS_COMMENTLIKES_INCRCOUNTKEY);
         if(cacheMap.isEmpty()){
             return;
         }

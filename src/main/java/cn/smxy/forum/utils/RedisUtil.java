@@ -317,7 +317,7 @@ public class RedisUtil {
      * @param key Redis Hash 的 key
      * @return Map<String, Object>（空则返回 emptyMap）
      */
-    public Map<String, Object> popHashAndDelete(String key) {
+    public Map<Object, Object> popHashAndDelete(String key) {
         String lua =
                 "local data = redis.call('HGETALL', KEYS[1]) " +
                         "redis.call('DEL', KEYS[1]) " +
@@ -331,7 +331,7 @@ public class RedisUtil {
             return Collections.emptyMap();
         }
 
-        Map<String, Object> result = new HashMap<>(raw.size() >> 1);
+        Map<Object, Object> result = new HashMap<>(raw.size() >> 1);
         for (int i = 0; i < raw.size(); i += 2) {
             result.put(raw.get(i), raw.get(i + 1));
         }

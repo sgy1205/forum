@@ -111,4 +111,8 @@ public class Constants {
      */
     public static final String REDIS_COMMENTLIKES_INCRCOUNTKEY = "commentLikesIncrCount";
 
+    /**
+     * 用户ws连接状态的key
+     */
+    public static final String USER_STATUS_KEY = "user:online:";
 }

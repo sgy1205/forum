@@ -21,6 +21,6 @@ public class PointListVo {
     @ApiModelProperty("积分数量")
     private Long pointNumber;
     @ApiModelProperty("积分获取时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date createTime;
 }

@@ -252,7 +252,9 @@
         <where>
             t1.del_flag = '0'
             AND t3.audit_status = 1
-            AND t1.recommend = #{postPageListDTO.recommend}
+            <if test="postPageListDTO.recommend != null and postPageListDTO.recommend != '' and postPageListDTO.recommend == 1">
+                AND t1.recommend = #{postPageListDTO.recommend}
+            </if>
             <if test="postPageListDTO.searchContent != null and postPageListDTO.searchContent != ''">
                 AND (
                 <![CDATA[

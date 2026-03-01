@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.smxy.forum.mapper.MessageMapper">
+
+    <select id="getConversationList" resultType="ConversationListVo">
+        SELECT
+        -- 对方用户ID
+        IF(m.user_id = #{userId}, m.receiver_id, m.user_id) AS userId,
+        -- 对方用户昵称
+        u.nick_name AS nickName,
+        -- 最后一条消息内容（保留原有字段）
+        m.message AS message,
+        -- 核心修改：统计当前用户的未读消息数量
+        unread.unread_count AS unreadCount,
+        -- 对方用户头像
+        u.avatar AS avatar,
+        m.create_time AS createTime
+        FROM (
+        -- 第一步：获取每个对话的唯一标识和最后一条消息的时间
+        SELECT
+        IF(user_id &lt; receiver_id, CONCAT(user_id, '_', receiver_id), CONCAT(receiver_id, '_', user_id)) AS conversation_key,
+        MAX(create_time) AS last_create_time
+        FROM message
+        WHERE user_id = #{userId} OR receiver_id = #{userId}
+        GROUP BY conversation_key
+        ) AS temp
+        -- 关联原message表获取最后一条消息的详情
+        INNER JOIN message m
+        ON (m.user_id = #{userId} OR m.receiver_id = #{userId})
+        AND IF(m.user_id &lt; m.receiver_id, CONCAT(m.user_id, '_', m.receiver_id), CONCAT(receiver_id, '_', m.user_id)) = temp.conversation_key
+        AND m.create_time = temp.last_create_time
+        -- 关联用户表获取对方用户信息
+        INNER JOIN user u
+        ON IF(m.user_id = #{userId}, m.receiver_id, m.user_id) = u.user_id
+        -- 核心新增：子查询统计每个对话的未读消息数
+        INNER JOIN (
+        SELECT
+        -- 生成和外层一致的对话唯一标识
+        IF(user_id &lt; receiver_id, CONCAT(user_id, '_', receiver_id), CONCAT(receiver_id, '_', user_id)) AS conversation_key,
+        -- 统计当前用户收到的、未读的消息数量（假设status=0代表未读）
+        COUNT(CASE
+        WHEN receiver_id = #{userId} AND status = 0 THEN 1
+        ELSE NULL
+        END) AS unread_count
+        FROM message
+        WHERE user_id = #{userId} OR receiver_id = #{userId}
+        GROUP BY conversation_key
+        ) AS unread
+        ON unread.conversation_key = temp.conversation_key
+        -- 按最后一条消息时间倒序排列
+        ORDER BY m.create_time DESC;
+    </select>
+
+</mapper>
